@@ -227,10 +227,10 @@ def start(part):
     else:
         socketio.emit(part+"generalend","Game over villagers won")
     socketio.emit(part+"sala","")
-    rooms.pop(part)
     time.sleep(30)
     for player in  players:
         socketio.emit(part+"reload"+player,"")
+    rooms.pop(part)
 
 #delete part
 def delete_room(room):
