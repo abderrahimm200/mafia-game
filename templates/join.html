@@ -1,0 +1,74 @@
+{%extends "mafia.html"%}
+{%block title%}Join{%endblock%}
+{%block content%}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+    <div id="container">
+        <div id="content">
+            <h1>Welcome to mafia game</h1>
+            <span>Read the rules <a href="https://en.wikipedia.org/wiki/Mafia_(party_game)" style="color: #03ffe7;" target="blank">here</a></span>
+            <div id="choose">
+                <h2 id="create" class="checked">Create</h2>
+                <h2 id="join">Join</h2>
+            </div>
+            <div id="avaible-rooms"   style="display: none;">
+                    <h2>Join an existing room</h2>
+                    <div id="rooms">
+                        {%for j in range(lenn)%} 
+                            <a href="/mafia/{{rooms[j]}}"><button type="submit" class="rooms">{{rooms[j]}}  {{numpl[j][0]}}/{{numpl[j][1]}}</button></a>
+                        {%endfor%}
+                    </div>
+            </div>
+            <div id="create-rooms">
+                <form method="POST">
+                    {%with messages =get_flashed_messages(with_categories=true)%}
+                        {%if  messages%}
+                            {%for category,message in messages%}
+                                {%if category=="join"%}
+                                    <span style="color: red;font-size: 18px;">{{message|safe}}</span>
+                                    <br>   
+                                {%endif%}
+                            {%endfor%}
+                        {%endif%}
+                    {%endwith%}
+                          
+                    <input type="text" class="create" name='room_name' placeholder="Create a new room">
+                    <div   id="godfather">
+                        <h2>Add godfather role</h2>
+                        <select id="gfather"  name="godfather">
+                            <option value=""></option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div  id="players_number"    style="display: none;">
+                        <h2>Number of players</h2>
+                        <select id="players_num" name="players_num">
+                            <option value=""></option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div    id="vote_cache"  style="display: none;">
+                        <h2>Vote hidden</h2>
+                        <select name="vote cache" id="vote">
+                            <option value=""></option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <input type='submit' id='next' value='create now'>   
+                    <br><span  style="color: red;">*Note that the room will be removed automaticaly after 10min if players don't join it</span>
+                </form> 
+            </div>
+        </div>
+    </div>
+    <script src="{{url_for('static', filename='/js/mafia.js')}}"></script>
+
+{%endblock%}

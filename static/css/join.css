@@ -1,0 +1,153 @@
+*{
+    font-family: sans-serif;
+}
+
+/*  join.html    */
+
+#container{ 
+   text-shadow:  0 0 5px black;
+}
+#content{
+    padding-top: 70px;
+}
+#container h1{
+    font-size: 50px;
+    padding: 50px 0 0 0;
+    margin: 0;
+}
+nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: #2b4560;
+    color: white;
+    border-bottom: 2px solid;
+}
+ul{
+    display: flex;
+}
+#button{
+    float: right;
+width: 100px;
+height: 30px;
+border: none;
+border-radius: 1.5em;
+border: 1px solid;
+background-color: #122337;
+}
+button{
+    cursor: pointer;
+}
+li{
+    margin: 20px;
+    list-style: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+li:hover{
+    color: teal;
+}
+
+#container{
+text-align: center;
+background: url("{{url_for('static', filename='mafia.jpg')}}") no-repeat;   
+background-size: cover;
+background-attachment:fixed;
+height: 800px;
+color: white;
+margin: 0;
+}
+#choose{
+    margin-top: 20px;
+    display: flex;
+align-items: center;
+justify-content: center;
+font-size: 25px;
+}
+#choose h2 {
+margin: 20px;
+border-bottom: 2px solid;
+padding-bottom: 10px;
+cursor: pointer;
+text-shadow: 1px 1px 1px black;
+}
+.checked{
+    color:blue;
+    border-color: blue;
+}
+#avaible-rooms{
+color: black;
+}
+.rooms{
+width: 400px;
+height: 40px;
+border: none;
+border-radius: 2em;
+margin: 3px;
+color: white;
+background: #001aff;
+}
+#rooms{
+display: grid;
+overflow: auto;
+height: 200px;
+width: max-content;
+margin: auto;
+}
+select{
+background-color: teal;
+width: 60px;
+font-size: 16px;
+border: none;
+height: 22px;
+}
+#next{
+background: #000039;
+border: none;
+width: max-content;
+height: max-content;
+border-radius: 2em;
+font-weight: bold;
+font-size: 17px;
+padding: 10px;
+margin-top: 20px;
+}
+.create{
+    background: #cdcdcd;
+border: rgb(129, 129, 129) 1px solid;
+margin-bottom: 15px;
+border-radius: 2em;
+height: 44px;
+width: 200px;
+padding: 0 33px;
+font-size: 20px;
+color: black;
+}
+footer{
+    background-color: black;
+    height: 210px;
+    text-align: center;
+    border-top:2px solid;
+}
+#border{
+    width: 800px;
+    height: 2px;
+    background-color: cyan;
+    margin:auto;
+}
+footer h2{
+    margin:10px ;
+}
+footer  .fa{
+    color:cadetblue;
+    font-size: 2em;
+    border-radius:100%;
+    margin:0 20px  20px  0;
+}
+.nav-footer{
+    display: flex;
+    align-items: center;
+justify-content: center;
+margin-top: 30px;
+}

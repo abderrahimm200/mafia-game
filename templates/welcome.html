@@ -1,0 +1,59 @@
+{%extends "mafia.html"%}
+{%block title%}{{room}}{%endblock%}
+{%block content%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mafia.css') }}">
+
+    <div id="all-content">
+        <section id="chat">
+            <div id="informations">
+                <h1>Username:<span id="room-username"  style="color: yellow;">{{username}}</span></h1>
+                 <h1>Room's name:<span id="room-name"  style="color: yellow;">{{room}}</span></h1>
+               <h1>Role:<span id="role"  style="color: yellow;">{{role}}</span></h1>
+            </div>
+                <div id="msg-content">
+                    <div id="update-msg">
+                        {%for msg in messages%}
+                            {%if msg['username']==username%}
+                                <div class="msg-div sended-msg">
+                                    <span class="message">{msg['msg']}</span><br>
+                                    <span  class="time">{msg['time']}</span>
+                                </div>
+                            {%else%}
+                                <div class="msg-div">
+                                    <span class="username">@{msg['username']}</span><br>
+                                    <span class="message">{msg['msg']}</span><br>
+                                    <span  class="time">{msg['time']}</span>
+                                </div>
+                            {%endif%}
+                        {%endfor%}
+                    </div>
+                    <div id="mafia-msg" style="display:none">
+
+                    </div>
+                    <div id="send-box">
+                        <input type="text" name="msg-box" id="msg-box" placeholder="Entrer un message">
+                        <button id="send"><i class="fa fa-send"></i></button>
+                    </div>
+                </div>
+        </section>
+        <div id="game-side">
+            <div id="chrono" class="upd">
+                <h1 style="color: red;font-size: 25px;">Don't reload the page to stay in the game</h1>
+            </div>
+            <div id="part-updates" class="upd">
+                    <h1>Updates:</h1>
+                    <div id="parts"  style="overflow: auto;height: 280px;">
+                        {%if not start%}
+                            <h1 id="wait">Waiting for players ...</h1>
+                        {%endif%}
+                    </div>
+            </div>
+            <div id="play" class="upd">
+                <div id="choose1"><h1 style="font-size: 25px;">Nothing to do right now</h1></div>
+                <div id="players-button" style="overflow: auto;max-height:140px ;">
+                </div>
+            </div>
+        </div>
+    </div>
+<script type=text/javascript  src="{{ url_for('static', filename='/js/welcome.js') }}"></script>
+{%endblock%}

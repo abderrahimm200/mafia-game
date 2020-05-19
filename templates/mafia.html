@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="shortcut icon" href="">
+    <script type=text/javascript  src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mafia.css') }}">
+</head>
+
+<body>
+    <nav>
+        <h1>Mafia game</h1>
+        <ul>
+            <li>Rules</li>
+            <li>Contact</li>
+            <li>Report</li>
+        </ul>
+    <a href="/logout"><button id="button">log out</button></a>
+    </nav>
+    {% block content %}{% endblock %}
+    <footer>   
+        <div  class="nav-footer">
+            <h2>About</h2>
+            <h2>Contact</h2>
+            <h2>Report</h2>
+        </div>
+        <div id="social"  class="nav-footer">
+            <a href="#"><i class="fa fa-facebook"></i></a>
+            <a href="#"><i class="fa fa-instagram"></i></a>
+            <a href="#"><i class="fa fa-twitter"></i></a>
+        </div>
+        <div id="border"  style="margin-bottom: 14px;"></div>
+        <span style="font-size: 13px;">&copy; 2020 Mafia game created by ABDELLAOUI</span>
+    </footer>
+</body>
+</html>
