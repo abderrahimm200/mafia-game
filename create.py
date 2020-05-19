@@ -229,7 +229,8 @@ def start(part):
     socketio.emit(part+"sala","")
     rooms.pop(part)
     time.sleep(30)
-    socketio.emit(room_name+"reload")
+    for player in  players:
+        socketio.emit(part+"reload"+player,"")
 
 #delete part
 def delete_room(room):
