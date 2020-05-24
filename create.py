@@ -54,14 +54,14 @@ def roles(godfather,players_num):
     roles=[]
     if godfather=="Yes":
         roles.append("godfather")
-        if players_num=="45":
+        if players_num in "45":
             pass
         elif players_num in "786":
             roles.append("mafia")
         else:
             roles+=["mafia"]*2
     else:
-        if players_num=="45":
+        if players_num in "45":
             roles.append("mafia")
         elif players_num in "786":
             roles+=["mafia"]*2
