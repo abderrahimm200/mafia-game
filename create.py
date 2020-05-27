@@ -207,12 +207,12 @@ def start(part):
         if  not (len(mafia) and len(villageois)>len(mafia)):
             break
         #discussion
-        chrono(part,180,"discussion")
+        chrono(part,150,"discussion")
         socketio.emit(part+"delplayers","")
         #vote
         for player in players:
             socketio.emit(f"{part}vote{player}","")
-        chrono(part,15,"vote")
+        chrono(part,30,"vote")
         socketio.emit(part+"delplayers","")
         #calcul vote
         socketio.emit(part+"general"+str(day),voter(part,lvote))
