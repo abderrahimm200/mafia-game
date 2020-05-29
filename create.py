@@ -174,8 +174,8 @@ def start(part):
         #mafia
         for player in mafia:
             socketio.emit(part+"night"+player,"")
-            socketio.emit(part+"mafia"+player,"<h1 style='padding:0;margin:0'>Kill a player </h1><h3 style='color:red;font-size:17px;margin:0'>*Note the if you're note agree to kill a player no one will die</h3>")
-            socketio.emit(part+"godfather"+player,"<h1 style='padding:0;margin:0'>Kill a player </h1><h3 style='color:red;font-size:17px;margin:0'>*Note the if you're note agree to kill a player no one will die</h3>")
+            socketio.emit(part+"mafia"+player,"<h1 style='padding:0;margin:0'>Kill a player </h1><h3 style='color:red;font-size:17px;margin:0'>*Note that if you're note agree to kill a player no one will die</h3>")
+            socketio.emit(part+"godfather"+player,"<h1 style='padding:0;margin:0'>Kill a player </h1><h3 style='color:red;font-size:17px;margin:0'>*Note that if you're note agree to kill a player no one will die</h3>")
         chrono(part,45,"mafia")
         socketio.emit(part+"delplayers",{player:player for player in players})
         #doctor
