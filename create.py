@@ -130,7 +130,8 @@ def voter(part,x):
 #chrono
 def chrono(part,x,y):
     s=round(time.time())+x
-    while s-round(time.time())>=0:
+    rooms[part]["skip"]=False
+    while s-round(time.time())>=0  and not rooms[part]["skip"]:
         t=s-round(time.time())
         d=t//60
         r=t%60
@@ -138,7 +139,7 @@ def chrono(part,x,y):
             d="0"+str(d)
         if r<10:
             r="0"+str(r)
-        socketio.emit(part+"chrono",{"event":y,"timer":str(d)+":"+str(r)})
+        socketio.emit(part+"chrono",{"event":y,"timer":str(d)+":"+str(r),"admin":rooms[part]["admin"]})
         time.sleep(1)
 
 #start part
@@ -176,17 +177,17 @@ def start(part):
             socketio.emit(part+"mafia"+player,"<h1 style='padding:0;margin:0'>Kill a player </h1><h3 style='color:red;font-size:17px;margin:0'>*Note the if you're note agree to kill a player no one will die</h3>")
             socketio.emit(part+"godfather"+player,"<h1 style='padding:0;margin:0'>Kill a player </h1><h3 style='color:red;font-size:17px;margin:0'>*Note the if you're note agree to kill a player no one will die</h3>")
         chrono(part,45,"mafia")
-        socketio.emit(part+"delplayers","")
+        socketio.emit(part+"delplayers",{player:player for player in players})
         #doctor
         if "".join(doctor) in villageois: 
             socketio.emit(part+"doctor"+"".join(doctor),"Save a player")
             chrono(part,15,"doctor")
-            socketio.emit(part+"delplayers","")
+            socketio.emit(part+"delplayers",{player:player for player in players})
         #detective
         if "".join(detective) in villageois and room['num_det']<=num_mafia:
             socketio.emit(part+"detective"+"".join(detective),"Check mafia ,you have "+str(num_mafia-room['num_det']+1)+" checks")
             chrono(part,15,"detective")
-            socketio.emit(part+"delplayers","")
+            socketio.emit(part+"delplayers",{player:player for player in players})
         socketio.emit(part+"morning","")
         time.sleep(2)
         room['night']=False
@@ -208,12 +209,12 @@ def start(part):
             break
         #discussion
         chrono(part,150,"discussion")
-        socketio.emit(part+"delplayers","")
+        socketio.emit(part+"delplayers",{player:player for player in players})
         #vote
         for player in players:
             socketio.emit(f"{part}vote{player}","")
         chrono(part,30,"vote")
-        socketio.emit(part+"delplayers","")
+        socketio.emit(part+"delplayers",{player:player for player in players})
         #calcul vote
         socketio.emit(part+"general"+str(day),voter(part,lvote))
         lvote.clear()
@@ -261,6 +262,7 @@ def message(player):
 @socketio.on("connexion")
 def connexion(msg):
     rooms[msg['room']]["active"].add(msg['username'])
+    emit(msg['room']+"connect",msg['username'],broadcast=True)
 
 #receiving from mafia
 @socketio.on("mafia")
@@ -318,6 +320,10 @@ def vote(player):
     else:
         emit(player['room']+player["username"]+day,"You voted for "+player_v)
 
+#skip
+@socketio.on("skip")
+def skip(room):
+    rooms[room]["skip"]=True
 """     *************   routes  ***************     """
 
 #login
@@ -384,6 +390,7 @@ def create_room():
                 if vote_cache=="Yes":
                     rooms[room]["vote_cache"]=True
                     create_roles(room)
+                rooms[room]["admin"]=session[name]
                 Thread(target=check_rooms,args=(room,)).start()
                 return redirect(url_for("join",room=room))
             else:
