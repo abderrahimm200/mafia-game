@@ -1,13 +1,9 @@
 //welcome.html
 
-var username=$("#room-username").html();
-var room=$("#room-name").html();
 console.log(room,username);
 
 var socket = io.connect(location.protocol+'//'+document.domain+':'+location.port);
-// var players=;
-//functions
-//create players button
+
 window.addEventListener('load',function(){
 function create(){
 $("#players-button").html("");
@@ -56,14 +52,14 @@ $("#msg-box").keypress(function(event){
     }
 })
 //receive
-socket.on(room+"msg",function(msg){
+socket.on(room+room_id+"msg",function(msg){
 if (msg['username']==username){
         $("#update-msg").prepend(`<div class="msg-div sended-msg"><span class="message">${msg['msg']}</span><br><span  class="time">${msg['time']}</span></div>`)
     }else{        
         $("#update-msg").prepend(` <div class="msg-div"><span class="username">@${msg['username']}</span><br><span class="message">${msg['msg']}</span><br><span  class="time">${msg['time']}</span></div>`)
     }
 })
-socket.on(room+"msg"+username,function(msg){
+socket.on(room+room_id+"msg"+username,function(msg){
             if (msg['username']==username){
             $("#mafia-msg").prepend(`<div class="msg-div sended-msg"><span class="message">${msg['msg']}</span><br><span  class="time">${msg['time']}</span></div>`)
             }else{        
@@ -71,7 +67,7 @@ socket.on(room+"msg"+username,function(msg){
             }
     })
 
-socket.on(room+"connect",function(msg){
+socket.on(room+room_id+"connect",function(msg){
         if(msg==username){
             $("#parts").prepend(`<div  class="part" style='padding:0'><div class="up" id="upsala"><h2>you joined the room</h2></div></div>`)
         }else{
@@ -79,26 +75,26 @@ socket.on(room+"connect",function(msg){
         }
 })
 
-socket.on(room+'night'+username,function(){
+socket.on(room+room_id+'night'+username,function(){
 $('#mafia-msg').css("display","flex")
 $('#update-msg').hide()
 })
-socket.on(room+"night",function(){
+socket.on(room+room_id+"night",function(){
 $("#game-side").css("background-image",'url("/static/css/game-night.jpg")')
 })
 
-socket.on(room+"morning",function(){
+socket.on(room+room_id+"morning",function(){
 $("#game-side").css("background-image",'url("/static/css/game-morning.jpg")')
 $('#mafia-msg').hide()
 $('#update-msg').css("display","flex")
 })
-socket.on(room+"reload"+username,function(){
+socket.on(room+room_id+"reload"+username,function(){
     location.reload();
 })
 
 
 
-socket.on(room+"delplayers",function(msg){
+socket.on(room+room_id+"delplayers",function(msg){
 $("#players-button").html("");
 for (var player in msg) {
     $("#players-button").append(`<div class='up' style='margin: auto;width: max-content;'><h2>${msg[player]}</h2></div>`)
@@ -106,7 +102,7 @@ for (var player in msg) {
 
 $("#choose1").html("Active players")
 })
-socket.on(room+"chrono",function(msg){
+socket.on(room+room_id+"chrono",function(msg){
     document.getElementById("chrono").innerHTML= `<h1 id="event">${msg['event']}</h1><h2 id='timer'>${msg['timer']}</h2>`;
     if(msg["event"]=="discussion" && msg["admin"]==username){
         $("#event").append("<input type='button' id='skip' value='skip'>")
@@ -116,37 +112,37 @@ socket.on(room+"chrono",function(msg){
     }
 })
 
-socket.on(room+"vote"+username,function(){
+socket.on(room+room_id+"vote"+username,function(){
     voter();
 })
-socket.on(room+"generalend",function(msg){
+socket.on(room+room_id+"generalend",function(msg){
     $("#parts").prepend(`<div  class="part" id="partsala"><div class="up" id="upsala"><h2>${msg}</h2></div></div>`)
 })
 
-socket.on(room+"role"+username,function(role){
+socket.on(room+room_id+"role"+username,function(role){
     document.getElementById("role").innerHTML=role;
     socket.emit("receive",{'username':username,'room':room})
     $("#wait").html("")
-    socket.on(room+role,function(doc){
+    socket.on(room+room_id+role,function(doc){
         $("#players-button").html(`<h2  style='color:black'>${doc}</h2>`);
     })
-    socket.on(room+'day',function(dayy){
+    socket.on(room+room_id+'day',function(dayy){
         var day=dayy;
         $("#parts").prepend(`<div  class="part" id="part${day}"><h1>Day${day}</h1><div class="up" id="up${day}"></div></div>`)
         
-        socket.on(room+"general"+day,function(msg){
+        socket.on(room+room_id+"general"+day,function(msg){
             $(`#up${day}`).append(`<h2>${msg}</h2>`)
         })
-        socket.on(room+username+day,function(vote){
+        socket.on(room+room_id+username+day,function(vote){
             $(`#up${day}`).append(`<h2>${vote}</h2>`)
             })
             
     })
-    socket.on(room+role+username,function(msg){
+    socket.on(room+room_id+role+username,function(msg){
         $("#choose1").html(msg)
         play(role);
     })
-    socket.on(room+"players",function(msg){
+    socket.on(room+room_id+"players",function(msg){
         players=msg;
     })
     
