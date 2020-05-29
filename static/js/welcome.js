@@ -1,6 +1,5 @@
 //welcome.html
 
-console.log(room,username);
 
 var socket = io.connect(location.protocol+'//'+document.domain+':'+location.port);
 
