@@ -10,6 +10,7 @@ var socket = io.connect(location.protocol+'//'+document.domain+':'+location.port
 //create players button
 window.addEventListener('load',function(){
 function create(){
+$("#players-button").html("");
 for (var key in players){
     $("#players-button").append(`<button class="players-choice" id=${players[key]}>${players[key]}</button>`)
 }}
@@ -70,6 +71,13 @@ socket.on(room+"msg"+username,function(msg){
             }
     })
 
+socket.on(room+"connect",function(msg){
+        if(msg==username){
+            $("#parts").prepend(`<div  class="part" style='padding:0'><div class="up" id="upsala"><h2>you joined the room</h2></div></div>`)
+        }else{
+            $("#parts").prepend(`<div  class="part" style='padding:0'><div class="up" id="upsala"><h2>${msg} joined the room</h2></div></div>`)
+        }
+})
 
 socket.on(room+'night'+username,function(){
 $('#mafia-msg').css("display","flex")
@@ -89,12 +97,23 @@ socket.on(room+"reload"+username,function(){
 })
 
 
-socket.on(room+"delplayers",function(){
+
+socket.on(room+"delplayers",function(msg){
 $("#players-button").html("");
-$("#choose1").html("Nothing to do now")
+for (var player in msg) {
+    $("#players-button").append(`<div class='up' style='margin: auto;width: max-content;'><h2>${msg[player]}</h2></div>`)
+}
+
+$("#choose1").html("Active players")
 })
 socket.on(room+"chrono",function(msg){
     document.getElementById("chrono").innerHTML= `<h1 id="event">${msg['event']}</h1><h2 id='timer'>${msg['timer']}</h2>`;
+    if(msg["event"]=="discussion" && msg["admin"]==username){
+        $("#event").append("<input type='button' id='skip' value='skip'>")
+        $("#skip").click(function(){
+            socket.emit("skip",room)
+        })
+    }
 })
 
 socket.on(room+"vote"+username,function(){
