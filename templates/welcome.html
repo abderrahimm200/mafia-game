@@ -15,14 +15,14 @@
                         {%for msg in messages%}
                             {%if msg['username']==username%}
                                 <div class="msg-div sended-msg">
-                                    <span class="message">{msg['msg']}</span><br>
-                                    <span  class="time">{msg['time']}</span>
+                                    <span class="message">{{msg['msg']}}</span><br>
+                                    <span  class="time">{{msg['time']}}</span>
                                 </div>
                             {%else%}
                                 <div class="msg-div">
-                                    <span class="username">@{msg['username']}</span><br>
-                                    <span class="message">{msg['msg']}</span><br>
-                                    <span  class="time">{msg['time']}</span>
+                                    <span class="username">@{{msg['username']}}</span><br>
+                                    <span class="message">{{msg['msg']}}</span><br>
+                                    <span  class="time">{{msg['time']}}</span>
                                 </div>
                             {%endif%}
                         {%endfor%}
