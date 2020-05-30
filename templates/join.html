@@ -41,12 +41,11 @@
                             <option value="No">No</option>
                         </select>
                     </div>
-                    <div  id="players_number"    style="display: none;">
+                    <div  id="players_number" style="display: none;">
                         <h2>Number of players</h2>
                         <select id="players_num" name="players_num">
                             <option value=""></option>
                             <option value="4">4</option>
-                            <option value="5">5</option>
                             <option value="6">6</option>
                             <option value="7">7</option>
                             <option value="8">8</option>
@@ -56,7 +55,15 @@
                             <option value="12">12</option>
                         </select>
                     </div>
-                    <div    id="vote_cache"  style="display: none;">
+                    <div   id="ange" style="display: none;">
+                        <h2>Add angel role</h2>
+                        <select id="angel"  name="angel">
+                            <option value=""></option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div  id="vote_cache"  style="display: none;">
                         <h2>Vote hidden</h2>
                         <select name="vote cache" id="vote">
                             <option value=""></option>
@@ -70,6 +77,6 @@
             </div>
         </div>
     </div>
-    <script src="{{url_for('static', filename='js/mafia.js')}}"></script>
+    <script src="{{url_for('static', filename='/js/mafia.js')}}"></script>
 
 {%endblock%}
