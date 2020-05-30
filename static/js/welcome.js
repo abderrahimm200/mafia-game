@@ -1,6 +1,5 @@
 //welcome.html
 
-
 var socket = io.connect(location.protocol+'//'+document.domain+':'+location.port);
 
 window.addEventListener('load',function(){
