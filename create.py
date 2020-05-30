@@ -35,7 +35,7 @@ def load_user(user_id):
     return  User.query.get(user_id)
 
 #create rooms
-rooms={"all":{"players":set({}),"player_role":[],"roles":[],"villageois":[],"mafia":[],"doctor":[],"vote":[],"detective":[],"kill":set({}),"hill":[],"dic_players":{},"start":False,"vote_cache":False,'active':set(),'day':1,'night':False}}
+rooms={"all":{"players":set({}),"player_role":[],"roles":[],"villageois":[],"mafia":[],"doctor":[],"vote":[],"detective":[],"kill":set({}),"hill":[],"dic_players":{},"messages":[],"start":False,"vote_cache":False,'active':set(),'day':1,'night':False}}
 list_room=[]
 
 """     **********         functions for the game          ***********     """
@@ -51,8 +51,10 @@ def check_rooms(room_name):
         socketio.emit(room_name+room_id+"reload")
 
 #create roles for given number of players
-def roles(godfather,players_num):
+def roles(godfather,angel,players_num):
     roles=[]
+    if angel=="Yes":
+        roles.append("angel")
     if godfather=="Yes":
         roles.append("godfather")
         if players_num in "45":
@@ -91,6 +93,8 @@ def create_roles(part):
             doctor.append(ra)
         elif rb=="detective":
             detective.append(ra)
+        elif rb=="angel":
+            room["angel"]=ra
         room["player_role"].append((ra,rb))
         socketio.emit(part+room_id+"role"+ra,rb)
         copy_players.remove(ra)
@@ -121,10 +125,14 @@ def voter(part,x):
         for i in calc:
             if calc[i]==max(calc_val):
                 players.remove(i)
+                if i==room["admin"]:
+                    room["admin"]=list(players)[0]
                 if i in mafia:
                     mafia.remove(i)
                 else:
                     villageois.remove(i)
+                if "angel" in room and i==room["angel"] and room["day"]<3:
+                    room.pop("angel")
                 dic_players.pop(i)
                 socketio.emit(part+room_id+"players",dic_players)
                 return f"{i} is dead he was {role(room,i)}"
@@ -163,6 +171,7 @@ def start(part):
     room_id=rooms[part]['room_id']
     socketio.emit(part+room_id+"players",dic_players)
     room['num_det']=1
+    angel=True if "angel" in room else False
     num_mafia=len(deepcopy(mafia))
     lvote=room['vote']
     #starting  part
@@ -186,7 +195,7 @@ def start(part):
         if "".join(doctor) in villageois: 
             socketio.emit(part+room_id+"doctor"+"".join(doctor),"Save a player")
             chrono(part,15,"doctor")
-            socketio.emit(part+"delplayers",{player:player for player in players})
+            socketio.emit(part+room_id+"delplayers",{player:player for player in players})
         #detective
         if "".join(detective) in villageois and room['num_det']<=num_mafia:
             socketio.emit(part+room_id+"detective"+"".join(detective),"Check mafia ,you have "+str(num_mafia-room['num_det']+1)+" checks")
@@ -201,13 +210,14 @@ def start(part):
             socketio.emit(part+room_id+"general"+str(day),"No one died this night")
         else:
             players.remove(kill)
+            if kill==room["admin"]:
+                room["admin"]=list(players)[0]
             if kill in mafia:
                 mafia.remove(kill)
             else:
                 villageois.remove(kill)
             socketio.emit(part+room_id+"general"+str(day),f"Mafia killed {kill}, he was {role(room,kill)}")
             dic_players.pop(kill)
-            socketio.emit(part+room_id+"reload"+kill,"")
         socketio.emit(part+room_id+"players",dic_players)
         if  not (len(mafia) and len(villageois)>len(mafia)):
             break
@@ -221,16 +231,21 @@ def start(part):
         socketio.emit(part+room_id+"delplayers",{player:player for player in players})
         #calcul vote
         socketio.emit(part+room_id+"general"+str(day),voter(part,lvote))
+        if angel and "angel" not in room:
+            break
         lvote.clear()
         rooms[part]['kill'].clear()
         room['hill'].clear()
         day+=1
         room['day']=day
     #end of part
-    if len(mafia):
+    if angel and "angel" not in room:
+        socketio.emit(part+room_id+"generalend","Game over angel won")
+    elif len(mafia):
         socketio.emit(part+room_id+"generalend","Game over mafia won")
     else:
         socketio.emit(part+room_id+"generalend","Game over villagers won")
+    
     socketio.emit(part+room_id+"sala","")
     time.sleep(30)
     for player in  players:
@@ -262,6 +277,7 @@ def message(player):
                 for user in mafia:
                     emit(room+room_id+'msg'+user,player,broadcast=True)
         else:
+            rooms[room]['messages'].append(player)
             emit(room+room_id+'msg',player,broadcast=True)
 
 @socketio.on("connexion")
@@ -387,11 +403,12 @@ def create_room():
         vote_cache=request.form.get("vote cache")#check if the user want the vote be hidden
         godfather=request.form.get("godfather")#check if the user want godfather role
         players_num=request.form.get("players_num")#get number of players
+        angel=request.form.get("angel")
         if (vote_cache and room and godfather and players_num):
             if room not in rooms:
                 list_room.append(room)
                 rooms[room]=deepcopy(rooms['all'])
-                rooms[room]['roles']=roles(godfather,players_num)#return the list of roles depending of the number of players
+                rooms[room]['roles']=roles(godfather,angel,players_num)#return the list of roles depending of the number of players
                 if vote_cache=="Yes":
                     rooms[room]["vote_cache"]=True
                     create_roles(room)
@@ -417,15 +434,14 @@ def join(room):
             req_room["players"].add(username)
             if len(req_room["players"])==len(req_room["roles"]):
                 req_room["start"]=True
-                req_room["replay"]=req_room["players"].copy()
                 for player in req_room['players']:
                     req_room['dic_players'][player]=player
                 Thread(target=start,args=(room,)).start()
                 Thread(target=delete_room,args=(room,)).start()
                 list_room.remove(room)
-            return render_template("welcome.html",room=room,username=session[name],room_id=req_room["room_id"])    
+            return render_template("welcome.html",room=room,username=session[name],room_id=req_room["room_id"],messages=req_room['messages'])    
     elif username in req_room["players"]:
-            return render_template("welcome.html",room=room,role=role(rooms[room],session[name]),start=rooms[room]['start'],username=session[name])
+            return render_template("welcome.html",room=room,role=role(rooms[room],session[name]),start=rooms[room]['start'],username=session[name],messages=req_room['messages'])
     return redirect(url_for("create_room"))
 
 #lougout
