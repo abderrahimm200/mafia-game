@@ -3,11 +3,14 @@ from flask import Flask,render_template,url_for,redirect,request,session,flash
 from flask_login import login_required,LoginManager,login_user,logout_user,current_user,UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import  SocketIO,send,emit
-import datetime,random,time,json,os
+import datetime,random,time,json,os,re
 from  copy import deepcopy
 name='name'
 app=Flask(__name__)
 app.config['SECRET_KEY']='mafiamafiagame'
+uri = os.getenv("DATABASE_URL")
+if uri and uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_DATABASE_URI']=os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key=os.environ.get("SECRET")
